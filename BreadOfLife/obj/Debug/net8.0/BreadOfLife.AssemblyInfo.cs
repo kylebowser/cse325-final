@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BreadOfLife")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fba1d0da262ebb519c75c7a7a78c44d10d387cc3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+140457b5f55603739834576eb7c0cff06a7ba5e9")]
 [assembly: System.Reflection.AssemblyProductAttribute("BreadOfLife")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BreadOfLife")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
