@@ -1,0 +1,38 @@
+@page "/baker/login"
+@using BreadOfLife.Models
+@using BreadOfLife.Services
+@inject AuthService AuthService
+@inject NavigationManager NavManager
+
+<div class="container">
+    <h2>Baker Login</h2>
+
+    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+        <DataAnnotationsValidator />
+
+        <div class="form-group">
+            <label>Email:</label>
+            <InputText @bind-Value="loginModel.Email" class="form-control" />
+            <ValidationMessage For="@(() => loginModel.Email)" />
+        </div>
+
+        <div class="form-group">
+            <label>Password:</label>
+            <InputText @bind-Value="loginModel.Password" type="password" class="form-control" />
+            <ValidationMessage For="@(() => loginModel.Password)" />
+        </div>
+
+        <button type="submit" class="btn">Login</button>
+    </EditForm>
+</div>
+
+@code {
+    private BakerLoginModel loginModel = new();
+
+    private void HandleLogin()
+    {
+        // Dummy login check
+        AuthService.Login(loginModel.Email);
+        NavManager.NavigateTo("/");
+    }
+}
