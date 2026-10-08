@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\kyleb\\cse325\\cse325-final\\BreadOfLife\\BreadOfLife.csproj": {}
+    "c:\\Users\\kyleb\\cse325\\cse325-final\\BreadOfLife\\BreadOfLife.csproj": {}
   },
   "projects": {
-    "C:\\Users\\kyleb\\cse325\\cse325-final\\BreadOfLife\\BreadOfLife.csproj": {
+    "c:\\Users\\kyleb\\cse325\\cse325-final\\BreadOfLife\\BreadOfLife.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\kyleb\\cse325\\cse325-final\\BreadOfLife\\BreadOfLife.csproj",
+        "projectUniqueName": "c:\\Users\\kyleb\\cse325\\cse325-final\\BreadOfLife\\BreadOfLife.csproj",
         "projectName": "BreadOfLife",
-        "projectPath": "C:\\Users\\kyleb\\cse325\\cse325-final\\BreadOfLife\\BreadOfLife.csproj",
+        "projectPath": "c:\\Users\\kyleb\\cse325\\cse325-final\\BreadOfLife\\BreadOfLife.csproj",
         "packagesPath": "C:\\Users\\kyleb\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\kyleb\\cse325\\cse325-final\\BreadOfLife\\obj\\",
+        "outputPath": "c:\\Users\\kyleb\\cse325\\cse325-final\\BreadOfLife\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\kyleb\\AppData\\Roaming\\NuGet\\NuGet.Config"

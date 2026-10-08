@@ -1,0 +1,54 @@
+@using BreadOfLife.Components.Model
+
+
+<div class="form-field">
+    <label>Name:</label>
+    <div>
+        <InputText @bind-Value="Product.Name" />
+        <ValidationMessage For="@(() => Product.Name)" />
+    </div>
+</div>
+
+<div class="form-field">
+    <label>Description:</label>
+    <div>
+        <InputText @bind-Value="Product.Description" />
+        <ValidationMessage For="@(() => Product.Description)" />
+    </div>
+</div>
+
+<div class="form-field">
+    <label>Ingredients:</label>
+    <div>
+        <InputText @bind-Value="Product.Ingredients" />
+        <ValidationMessage For="@(() => Product.Ingredients)" />
+    </div>
+</div>
+
+<div class="form-field">
+    <label>Allergens:</label>
+    <div>
+        <InputText @bind-Value="Product.Allergens" />
+        <ValidationMessage For="@(() => Product.Allergens)" />
+    </div>
+</div>
+
+<div class="form-field">
+    <label>Price:</label>
+    <div>
+        <InputText @bind-Value="Product.Price" />
+        <ValidationMessage For="@(() => Product.Price)" />
+    </div>
+</div>
+
+<div class="form-field">
+    <label>Time:</label>
+    <div>
+        <InputText @bind-Value="Product.Time" />
+        <ValidationMessage For="@(() => Product.Time)" />
+    </div>
+</div>
+
+@code {
+    [Parameter] public Product Product { get; set; } = default!;
+}
