@@ -1,0 +1,46 @@
+@page "/addproduct"
+@using BreadOfLife.Components.Shared
+@using BreadOfLife.Components.Model
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+
+<div class="main">
+    <EditForm Model="product" OnValidSubmit="SaveProduct">
+        <div class="checkout-cols">
+            <div class="checkout-order-details">
+                <h4>Review order</h4>
+            </div>
+
+            <div class="checkout-delivery-address">
+                <h4>Deliver to...</h4>
+                @if (isError)
+                {
+                    <div class="alert alert-danger">Please enter a name and address.</div>
+                }
+                <ProductAdder Product="product" />
+            </div>
+        </div>
+
+        <button class="checkout-button btn btn-warning" type="Submit" disabled=@isError> </button>
+        <DataAnnotationsValidator />
+    </EditForm>
+</div>
+
+@code {
+    private Product product = new();
+
+
+    bool isError = false;
+    protected void ShowError()
+    {
+        isError = true;
+    }
+
+    async Task SaveProduct()
+    {
+        var response = await HttpClient.PostAsJsonAsync(NavigationManager.BaseUri + "products", product);
+        var newProductId = await response.Content.ReadFromJsonAsync<int>();
+        NavigationManager.NavigateTo($"products/{newProductId}");
+    }
+}
