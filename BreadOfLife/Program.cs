@@ -1,4 +1,5 @@
 using BreadOfLife.Components;
+using BreadOfLife.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,9 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddHttpClient();
 
+
+builder.Services.AddScoped<AuthService>(); 
+builder.Services.AddScoped<CartService>();
 
 var app = builder.Build();
 

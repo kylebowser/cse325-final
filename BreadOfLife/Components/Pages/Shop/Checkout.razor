@@ -1,0 +1,70 @@
+@page "/checkout"
+@using BreadOfLife.Models
+@using BreadOfLife.Services
+@inject CartService CartService
+@inject NavigationManager NavManager
+
+<div class="container">
+    <h2>Guest Checkout</h2>
+    <p>Total Amount: <strong>$@CartService.GetTotal()</strong></p>
+
+    @if (checkoutComplete)
+    {
+        <div style="background-color: #d4edda; padding: 1rem; color: #155724;">
+            <h3>Success!</h3>
+            <p>Your treats are on the way.</p>
+        </div>
+    }
+    else
+    {
+        <EditForm Model="@checkoutModel" OnValidSubmit="ProcessCheckout">
+            <DataAnnotationsValidator />
+
+            <h4>Missionary Details</h4>
+            <div class="form-group">
+                <label>Missionary Full Name:</label>
+                <InputText @bind-Value="checkoutModel.MissionaryName" class="form-control" />
+                <ValidationMessage For="@(() => checkoutModel.MissionaryName)" />
+            </div>
+            <div class="form-group">
+                <label>Assigned Mission:</label>
+                <InputText @bind-Value="checkoutModel.MissionName" class="form-control"
+                           placeholder="e.g., Utah Provo Mission" />
+                <ValidationMessage For="@(() => checkoutModel.MissionName)" />
+            </div>
+
+            <h4>Payment Information (Dummy Data)</h4>
+            <div class="form-group">
+                <label>Card Number:</label>
+                <InputText @bind-Value="checkoutModel.CardNumber" class="form-control" />
+                <ValidationMessage For="@(() => checkoutModel.CardNumber)" />
+            </div>
+            <div class="form-group" style="display:flex; gap: 1rem;">
+                <div style="flex: 1;">
+                    <label>MM/YY:</label>
+                    <InputText @bind-Value="checkoutModel.ExpirationDate" class="form-control" />
+                    <ValidationMessage For="@(() => checkoutModel.ExpirationDate)" />
+                </div>
+                <div style="flex: 1;">
+                    <label>CVV:</label>
+                    <InputText @bind-Value="checkoutModel.CVV" class="form-control" />
+                    <ValidationMessage For="@(() => checkoutModel.CVV)" />
+                </div>
+            </div>
+
+            <button type="submit" class="btn">Place Order</button>
+        </EditForm>
+    }
+</div>
+
+@code {
+    private CheckoutModel checkoutModel = new();
+    private bool checkoutComplete = false;
+
+    private void ProcessCheckout()
+    {
+        // Dummy process: Clear cart and show success message
+        CartService.ClearCart();
+        checkoutComplete = true;
+    }
+}
