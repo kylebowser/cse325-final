@@ -1,7 +1,25 @@
 using BreadOfLife.Components;
 using BreadOfLife.Services;
+using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// 1. Fetch settings from appsettings.json
+var mongoSettings = builder.Configuration.GetSection("MongoDbSettings");
+var connectionString = mongoSettings["ConnectionString"];
+var databaseName = mongoSettings["DatabaseName"];
+
+// 2. Register IMongoClient as a Singleton
+builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(connectionString));
+
+// 3. Register IMongoDatabase scoped or singleton (optional but highly recommended)
+builder.Services.AddScoped(sp =>
+{
+    var client = sp.GetRequiredService<IMongoClient>();
+    return client.GetDatabase(databaseName);
+});
+
+builder.Services.AddControllers();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -9,7 +27,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddHttpClient();
 
 
-builder.Services.AddScoped<AuthService>(); 
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<CartService>();
 
 var app = builder.Build();
@@ -29,5 +47,6 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+app.MapControllers();
 
 app.Run();

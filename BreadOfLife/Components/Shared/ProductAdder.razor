@@ -36,16 +36,16 @@
 <div class="form-field">
     <label>Price:</label>
     <div>
-        <InputText @bind-Value="Product.Price" />
+        <InputNumber @bind-Value="Product.Price" />
         <ValidationMessage For="@(() => Product.Price)" />
     </div>
 </div>
 
 <div class="form-field">
-    <label>Time:</label>
+    <label>Days:</label>
     <div>
-        <InputText @bind-Value="Product.Time" />
-        <ValidationMessage For="@(() => Product.Time)" />
+        <InputNumber @bind-Value="Product.Days" />
+        <ValidationMessage For="@(() => Product.Days)" />
     </div>
 </div>
 
