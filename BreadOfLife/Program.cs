@@ -2,6 +2,8 @@ using BreadOfLife.Components;
 using BreadOfLife.Services;
 using MongoDB.Driver;
 
+DotNetEnv.Env.Load(".env");
+
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Fetch settings from appsettings.json
