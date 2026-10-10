@@ -1,5 +1,8 @@
 {
-  "Email": "baker@example.invalid",
-  "Password": "REPLACE_WITH_A_SECURELY_HASHED_PASSWORD",
-  "ZipCode": "83702"
-}
+"_id": "ObjectId('6ac86948d5dd5ba4208e356d')",
+"Email": "baker@example.invalid",
+"Password": "REPLACE_WITH_A_SECURELY_HASHED_PASSWORD",
+"ZipCode": "83702",
+"Name": "Jane Austin"
+} 
+
