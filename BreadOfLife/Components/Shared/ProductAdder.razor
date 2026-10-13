@@ -34,6 +34,14 @@
 </div>
 
 <div class="form-field">
+    <label>Image URL:</label>
+    <div>
+        <InputText @bind-Value="Product.ImageUrl" />
+        <ValidationMessage For="@(() => Product.ImageUrl)" />
+    </div>
+</div>
+
+<div class="form-field">
     <label>Price:</label>
     <div>
         <InputNumber @bind-Value="Product.Price" />
@@ -46,6 +54,14 @@
     <div>
         <InputNumber @bind-Value="Product.Days" />
         <ValidationMessage For="@(() => Product.Days)" />
+    </div>
+</div>
+
+<div class="form-field">
+    <label>Baker:</label>
+    <div>
+        <InputText @bind-Value="Product.Baker" />
+        <ValidationMessage For="@(() => Product.Baker)" />
     </div>
 </div>
 

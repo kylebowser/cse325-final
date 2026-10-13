@@ -1,0 +1,34 @@
+@page "/product/{id}"
+
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+@using BreadOfLife.Components.Model
+@if (Product == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h1>@Product.Name</h1>
+    <p>Baker: @Product.Baker</p>
+    <img src="@Product.ImageUrl" alt="@Product.Name" />
+    <p>@Product.Description</p>
+    <h2>Ingredients:</h2>
+    <p>@Product.Ingredients</p>
+    <p>Allergens: @Product.Allergens</p>
+    <p>Price: $@Product.Price.ToString("0.00")</p>
+    <p>Days till Delivery: @Product.Days Days</p>
+}
+
+@code {
+
+    [Parameter] public string id { get; set; } = string.Empty;
+    private Product? Product;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Product = await HttpClient.GetFromJsonAsync<Product>(NavigationManager.BaseUri + $"api/products/{id}");
+    }
+
+}

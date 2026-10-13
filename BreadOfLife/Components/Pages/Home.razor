@@ -4,15 +4,19 @@
 @using BreadOfLife.Components.Model
 
 <PageTitle>Home</PageTitle>
+<form @onsubmit="SearchProducts" @onsubmit:preventDefault="true">
+    <input type="text" @bind="searchQuery" placeholder="Search products..." />
+    <button type="submit">Search</button>
+</form>
 
-<ul class="pizza-cards">
+<ul class="product-cards">
     @if (products != null)
     {
         @foreach (var product in products)
         {
             <li @onclick="@(() => NavigationManager.NavigateTo($"/product/{product.Id}"))"
                 style="background-image: url('@product.ImageUrl')">
-                <div class="pizza-info">
+                <div class="product-info">
                     <span class="title">@product.Name</span>
                     @product.Description
                     <span class="price">$@product.Price.ToString("0.00")</span>
@@ -27,8 +31,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        products = await HttpClient.GetFromJsonAsync<List<Product>>(NavigationManager.BaseUri + "product");
+        products = await HttpClient.GetFromJsonAsync<List<Product>>(NavigationManager.BaseUri + "api/products");
+    }
+
+    private string searchQuery = "";
+    private async Task SearchProducts()
+    {
+        var url = $"{NavigationManager.BaseUri}api/products/search?searchString={searchQuery}";
+        products = await HttpClient.GetFromJsonAsync<List<Product>>(url);
     }
 
 }
-

@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System.Text.Json.Serialization;
 
 namespace BreadOfLife.Components.Model
 {
@@ -9,11 +8,8 @@ namespace BreadOfLife.Components.Model
     {
 
         [BsonId]
-        [JsonIgnore]
-        public ObjectId MongoId { get; set; }
-
-        [BsonElement("Id")]
-        public int Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
         [Required, MinLength(3), MaxLength(100)]
         public string Name { get; set; }

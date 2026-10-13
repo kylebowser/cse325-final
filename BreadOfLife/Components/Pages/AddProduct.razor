@@ -22,7 +22,7 @@
             </div>
         </div>
 
-        <button class="checkout-button btn btn-warning" type="Submit" disabled=@isError> </button>
+        <button class="checkout-button btn btn-warning" type="Submit" disabled=@isError>Add Product</button>
         <DataAnnotationsValidator />
     </EditForm>
 </div>
@@ -39,8 +39,8 @@
 
     async Task SaveProduct()
     {
-        var response = await HttpClient.PostAsJsonAsync(NavigationManager.BaseUri + "products", product);
-        var newProductId = await response.Content.ReadFromJsonAsync<int>();
-        NavigationManager.NavigateTo($"products/{newProductId}");
+        var response = await HttpClient.PostAsJsonAsync(NavigationManager.BaseUri + "api/products", product);
+        var newProductId = await response.Content.ReadAsStringAsync();
+        NavigationManager.NavigateTo($"/product/{newProductId}");
     }
 }
