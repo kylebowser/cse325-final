@@ -1,23 +1,37 @@
 @page "/checkout"
+@rendermode InteractiveServer
 @using BreadOfLife.Models
 @using BreadOfLife.Services
 @inject CartService CartService
+@inject OrderService OrderService
 @inject NavigationManager NavManager
 
 <div class="container">
     <h2>Guest Checkout</h2>
-    <p>Total Amount: <strong>$@CartService.GetTotal()</strong></p>
 
     @if (checkoutComplete)
     {
-        <div style="background-color: #d4edda; padding: 1rem; color: #155724;">
+        <div style="background-color: #d4edda; padding: 1.5rem; color: #155724; border-radius: 5px;">
             <h3>Success!</h3>
-            <p>Your treats are on the way.</p>
+            <p>Your order for <strong>$@finalTotal</strong> has been placed.</p>
+            <p>The following treats are on their way to <strong>@checkoutModel.MissionaryName</strong>:</p>
+            
+            <ul style="margin-top: 1rem; list-style-type: none; padding-left: 0;">
+                @foreach (var item in purchasedItems)
+                {
+                    <li style="margin-bottom: 0.5rem; border-bottom: 1px dashed #28a745; padding-bottom: 0.5rem;">
+                        <strong>@item.Quantity x @item.Name</strong>
+                        <span style="float: right;">$@(item.Price * item.Quantity)</span>
+                    </li>
+                }
+            </ul>
         </div>
     }
     else
     {
-        <EditForm Model="@checkoutModel" OnValidSubmit="ProcessCheckout">
+        <p>Total Amount: <strong>$@CartService.GetTotal()</strong></p>
+
+        <EditForm Model="@checkoutModel" OnValidSubmit="ProcessCheckout" FormName="checkoutForm">
             <DataAnnotationsValidator />
 
             <h4>Missionary Details</h4>
@@ -33,25 +47,6 @@
                 <ValidationMessage For="@(() => checkoutModel.MissionName)" />
             </div>
 
-            <h4>Payment Information (Dummy Data)</h4>
-            <div class="form-group">
-                <label>Card Number:</label>
-                <InputText @bind-Value="checkoutModel.CardNumber" class="form-control" />
-                <ValidationMessage For="@(() => checkoutModel.CardNumber)" />
-            </div>
-            <div class="form-group" style="display:flex; gap: 1rem;">
-                <div style="flex: 1;">
-                    <label>MM/YY:</label>
-                    <InputText @bind-Value="checkoutModel.ExpirationDate" class="form-control" />
-                    <ValidationMessage For="@(() => checkoutModel.ExpirationDate)" />
-                </div>
-                <div style="flex: 1;">
-                    <label>CVV:</label>
-                    <InputText @bind-Value="checkoutModel.CVV" class="form-control" />
-                    <ValidationMessage For="@(() => checkoutModel.CVV)" />
-                </div>
-            </div>
-
             <button type="submit" class="btn">Place Order</button>
         </EditForm>
     }
@@ -60,10 +55,24 @@
 @code {
     private CheckoutModel checkoutModel = new();
     private bool checkoutComplete = false;
+    private decimal finalTotal = 0;
+    private List<CartItem> purchasedItems = new(); // Variable to hold the items
 
-    private void ProcessCheckout()
+    private async Task ProcessCheckout()
     {
-        // Dummy process: Clear cart and show success message
+        finalTotal = CartService.GetTotal();
+        purchasedItems = CartService.Items.ToList(); // Capture items before clearing the cart
+
+        var newOrder = new Order
+        {
+            MissionaryName = checkoutModel.MissionaryName,
+            MissionName = checkoutModel.MissionName,
+            TotalAmount = finalTotal,
+            Items = purchasedItems // Pass the captured list to the database
+        };
+
+        await OrderService.PlaceOrderAsync(newOrder);
+
         CartService.ClearCart();
         checkoutComplete = true;
     }

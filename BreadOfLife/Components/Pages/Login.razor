@@ -1,4 +1,5 @@
 @page "/baker/login"
+@rendermode InteractiveServer
 @using BreadOfLife.Models
 @using BreadOfLife.Services
 @inject AuthService AuthService
@@ -7,7 +8,14 @@
 <div class="container">
     <h2>Baker Login</h2>
 
-    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div style="color: red; margin-bottom: 1rem; font-weight: bold;">
+            @errorMessage
+        </div>
+    }
+
+    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin" FormName="bakerLoginForm">
         <DataAnnotationsValidator />
 
         <div class="form-group">
@@ -28,11 +36,20 @@
 
 @code {
     private BakerLoginModel loginModel = new();
+    private string errorMessage = "";
 
-    private void HandleLogin()
+    private async Task HandleLogin()
     {
-        // Dummy login check
-        AuthService.Login(loginModel.Email);
-        NavManager.NavigateTo("/");
+        errorMessage = "";
+        bool success = await AuthService.LoginAsync(loginModel.Email, loginModel.Password);
+        
+        if (success)
+        {
+            NavManager.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = "Invalid email or password.";
+        }
     }
 }

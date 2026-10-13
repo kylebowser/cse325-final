@@ -17,14 +17,5 @@ namespace BreadOfLife.Models
 
         [Required(ErrorMessage = "Assigned mission is required (e.g., Utah Provo Mission).")]
         public string MissionName { get; set; }
-
-        [Required, CreditCard(ErrorMessage = "Invalid credit card number.")]
-        public string CardNumber { get; set; }
-
-        [Required, RegularExpression(@"^(0[1-9]|1[0-2])\/?([0-9]{2})$", ErrorMessage = "Use MM/YY format.")]
-        public string ExpirationDate { get; set; }
-
-        [Required, RegularExpression(@"^\d{3,4}$", ErrorMessage = "Invalid CVV.")]
-        public string CVV { get; set; }
     }
 }

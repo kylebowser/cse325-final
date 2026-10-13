@@ -1,4 +1,5 @@
 @page "/cart"
+@rendermode InteractiveServer
 @using BreadOfLife.Services
 @using BreadOfLife.Models
 @inject CartService CartService
@@ -17,12 +18,39 @@
     }
     else
     {
-        <ul>
-            @foreach (var item in CartService.Items)
-            {
-                <li>@item.Quantity x @item.Name - $@(item.Price * item.Quantity)</li>
-            }
-        </ul>
+        <table style="width: 100%; text-align: left; margin-bottom: 20px;">
+            <thead>
+                <tr style="border-bottom: 1px solid #ccc;">
+                    <th style="padding: 10px 0;">Item</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in CartService.Items)
+                {
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 10px 0;">@item.Name</td>
+                        <td>$@item.Price</td>
+                        <td>
+                            <button @onclick="() => UpdateQuantity(item.Id, item.Quantity - 1)"
+                                    style="margin-right: 5px;">-</button>
+                            @item.Quantity
+                            <button @onclick="() => UpdateQuantity(item.Id, item.Quantity + 1)"
+                                    style="margin-left: 5px;">+</button>
+                        </td>
+                        <td>$@(item.Price * item.Quantity)</td>
+                        <td>
+                            <button @onclick="() => RemoveItem(item.Id)"
+                                    style="color: red; background: none; border: none; cursor: pointer;">Remove</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        
         <h3>Total: $@CartService.GetTotal()</h3>
         <button class="btn" @onclick='() => NavManager.NavigateTo("/checkout")'>Proceed to Checkout</button>
     }
@@ -42,5 +70,15 @@
     private void AddDummyItem()
     {
         CartService.AddToCart(new CartItem { Name = "Chocolate Chip Cookies (Dozen)", Price = 15.00m, Quantity = 1 });
+    }
+
+    private void RemoveItem(string id)
+    {
+        CartService.RemoveFromCart(id);
+    }
+
+    private void UpdateQuantity(string id, int quantity)
+    {
+        CartService.UpdateQuantity(id, quantity);
     }
 }
