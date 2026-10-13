@@ -1,4 +1,5 @@
 @page "/baker/register"
+@rendermode InteractiveServer
 @using BreadOfLife.Models
 @using BreadOfLife.Services
 @inject AuthService AuthService
@@ -6,8 +7,15 @@
 
 <div class="container">
     <h2>Baker Registration</h2>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div style="color: red; margin-bottom: 1rem; font-weight: bold;">
+            @errorMessage
+        </div>
+    }
     
-    <EditForm Model="@registerModel" OnValidSubmit="HandleRegistration">
+    <EditForm Model="@registerModel" OnValidSubmit="HandleRegistration" FormName="bakerRegistrationForm">
         <DataAnnotationsValidator />
 
         <div class="form-group">
@@ -35,11 +43,20 @@
 
 @code {
     private BakerRegistrationModel registerModel = new();
+    private string errorMessage = "";
 
-    private void HandleRegistration()
+    private async Task HandleRegistration()
     {
-        // will save to DB here. For now, auto-login and redirect.
-        AuthService.Login(registerModel.Email);
-        NavManager.NavigateTo("/");
+        errorMessage = "";
+        bool success = await AuthService.RegisterAsync(registerModel);
+        
+        if (success)
+        {
+            NavManager.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = "A baker with this email already exists.";
+        }
     }
 }

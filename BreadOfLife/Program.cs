@@ -31,6 +31,7 @@ builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<CartService>();
+builder.Services.AddScoped<OrderService>();
 
 var app = builder.Build();
 
