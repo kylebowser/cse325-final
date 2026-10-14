@@ -26,7 +26,10 @@ public class ProductsController : Controller
     [HttpGet("search")]
     public async Task<IActionResult> Search(string searchString)
     {
-        var products = await _productCollection.Find(p => p.Name.Contains(searchString)).ToListAsync();
+        var products = await _productCollection.Find(p => p.Name.Contains(searchString)).ToListAsync()
+        ;
+        var bakerProducts = await _productCollection.Find(p => p.Baker.Contains(searchString)).ToListAsync();
+        products.AddRange(bakerProducts);
         return Ok(products);
     }
 

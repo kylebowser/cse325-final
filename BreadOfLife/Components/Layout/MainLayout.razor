@@ -1,4 +1,8 @@
 ﻿@inherits LayoutComponentBase
+@using BreadOfLife.Services
+@inject NavigationManager NavigationManager
+@inject HttpClient HttpClient
+@inject AuthService AuthService
 
 <div class="main-layout">
     <header class="top-bar">
@@ -7,15 +11,26 @@
             @* <img src="img/logo.svg" /> *@
         </a>
 
-        @* <NavLink href="" class="nav-tab" Match="NavLinkMatch.All">
-            <img src="img/pizza-slice.svg" />
-            <div>Get Pizza</div>
+        @if (!AuthService.IsLoggedIn)
+        {
+            <NavLink href="baker/login" class="nav-tab" Match="NavLinkMatch.All">
+                <div>Login</div>
+            </NavLink>
+
+            <NavLink href="baker/register" class="nav-tab">
+                <div>Sign Up</div>
+            </NavLink>
+        }
+        <NavLink href="checkout" class="nav-tab">
+            <div>Checkout</div>
         </NavLink>
 
-        <NavLink href="myorders" class="nav-tab">
-            <img src="img/bike.svg" />
-            <div>My Orders</div>
-        </NavLink> *@
+        @if (AuthService.IsLoggedIn)
+        {
+            <NavLink href="addproduct" class="nav-tab">
+                <div>Add Product</div>
+            </NavLink>
+        }
     </header>
 
 
@@ -24,7 +39,7 @@
     </div>
 
     <footer>
-        &copy; Bread of Life @DateTime.UtcNow.Year | Kyle Bowser | Antony  | CSE 325 Final Project
+        &copy; Bread of Life @DateTime.UtcNow.Year | Kyle Bowser | Antony | CSE 325 Final Project
     </footer>
 </div>
 
