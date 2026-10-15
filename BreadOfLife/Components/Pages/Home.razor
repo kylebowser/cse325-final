@@ -4,21 +4,26 @@
 @using BreadOfLife.Components.Model
 
 <PageTitle>Home</PageTitle>
-<form @onsubmit="SearchProducts" @onsubmit:preventDefault="true">
-    <input type="text" @bind="searchQuery" placeholder="Search products..." />
-    <button type="submit">Search</button>
-</form>
+<div class="search-container">
+    <form class="search-form" @onsubmit="SearchProducts" @onsubmit:preventDefault="true">
+        <input type="text" class="search-input" @bind="searchQuery" placeholder="Search fresh baked goods..." />
+        <button type="submit" class="btn-search">Search</button>
+    </form>
+</div>
 
 <ul class="product-cards">
     @if (products != null)
     {
         @foreach (var product in products)
         {
-            <li @onclick="@(() => NavigationManager.NavigateTo($"/product/{product.Id}"))"
-                style="background-image: url('@product.ImageUrl')">
+            <li class="product-card" @onclick="@(() => NavigationManager.NavigateTo($"/product/{product.Id}"))">
+                <!-- Image separated into its own container -->
+                <div class="product-image" style="background-image: url('@product.ImageUrl')"></div>
+                
+                <!-- Info section below the image -->
                 <div class="product-info">
                     <span class="title">@product.Name</span>
-                    @product.Description
+                    <p class="description">@product.Description</p>
                     <span class="price">$@product.Price.ToString("0.00")</span>
                 </div>
             </li>
@@ -37,8 +42,17 @@
     private string searchQuery = "";
     private async Task SearchProducts()
     {
-        var url = $"{NavigationManager.BaseUri}api/products/search?searchString={searchQuery}";
-        products = await HttpClient.GetFromJsonAsync<List<Product>>(url);
+        if (string.IsNullOrWhiteSpace(searchQuery))
+        {
+            // If search is empty, reset to all products
+            products = await HttpClient.GetFromJsonAsync<List<Product>>(NavigationManager.BaseUri + "api/products");
+        }
+        else
+        {
+            // Otherwise, call the search endpoint
+            var url = $"{NavigationManager.BaseUri}api/products/search?searchString={searchQuery}";
+            products = await HttpClient.GetFromJsonAsync<List<Product>>(url);
+        }
     }
 
 }

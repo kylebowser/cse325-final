@@ -6,69 +6,85 @@
 @inject OrderService OrderService
 @inject NavigationManager NavManager
 
-<div class="container">
-    <h2>Guest Checkout</h2>
+<div class="form-wrapper">
+    <div class="form-card">
+        <h2>Guest Checkout</h2>
 
-    @if (checkoutComplete)
-    {
-        <div style="background-color: #d4edda; padding: 1.5rem; color: #155724; border-radius: 5px;">
-            <h3>Success!</h3>
-            <p>Your order for <strong>$@finalTotal</strong> has been placed.</p>
-            <p>The following treats are on their way to <strong>@checkoutModel.MissionaryName</strong>:</p>
-            
-            <ul style="margin-top: 1rem; list-style-type: none; padding-left: 0;">
-                @foreach (var item in purchasedItems)
-                {
-                    <li style="margin-bottom: 0.5rem; border-bottom: 1px dashed #28a745; padding-bottom: 0.5rem;">
-                        <strong>@item.Quantity x @item.Name</strong>
-                        <span style="float: right;">$@(item.Price * item.Quantity)</span>
-                    </li>
-                }
-            </ul>
-        </div>
-    }
-    else
-    {
-        <p>Total Amount: <strong>$@CartService.GetTotal()</strong></p>
+        @if (checkoutComplete)
+        {
+            <div style="background-color: #f0fdf4; padding: 2rem; border-radius: 8px; border: 1px solid #bbf7d0;">
+                <h3 style="margin-top: 0; color: #166534;">Success!</h3>
+                <p style="color: #15803d;">Your order for <strong>$@finalTotal.ToString("0.00")</strong> has been placed.
+                </p>
+                <p style="color: #15803d; margin-bottom: 1.5rem;">The following treats are on their way to
+                    <strong>@checkoutModel.MissionaryName</strong>:</p>
+                
+                    <ul style="list-style-type: none; padding-left: 0; margin-bottom: 2rem;">
+                        @foreach (var item in purchasedItems)
+                        {
+                            <li
+                                style="margin-bottom: 0.8rem; border-bottom: 1px dashed #bbf7d0; padding-bottom: 0.8rem; display: flex; justify-content: space-between; color: #166534;">
+                                <span><strong>@item.Quantity x @item.Name</strong></span>
+                                <span>$@((item.Price * item.Quantity).ToString("0.00"))</span>
+                            </li>
+                        }
+                    </ul>
+                
+                    <button class="btn-submit" @onclick='() => NavManager.NavigateTo("/")'>Return Home</button>
+                </div>
+            }
+        else
+            {
+                <p class="form-subtitle">Total Amount: <strong>$@CartService.GetTotal().ToString("0.00")</strong></p>
 
-        <EditForm Model="@checkoutModel" OnValidSubmit="ProcessCheckout" FormName="checkoutForm">
-            <DataAnnotationsValidator />
+                <EditForm Model="@checkoutModel" OnValidSubmit="ProcessCheckout" FormName="checkoutForm">
+                    <DataAnnotationsValidator />
 
-            <h4>Missionary Details</h4>
-            <div class="form-group">
-                <label>Missionary Full Name:</label>
-                <InputText @bind-Value="checkoutModel.MissionaryName" class="form-control" />
-                <ValidationMessage For="@(() => checkoutModel.MissionaryName)" />
-            </div>
-            <div class="form-group">
-                <label>Assigned Mission:</label>
-                <InputText @bind-Value="checkoutModel.MissionName" class="form-control"
-                           placeholder="e.g., Utah Provo Mission" />
-                <ValidationMessage For="@(() => checkoutModel.MissionName)" />
-            </div>
+                    <h4
+                        style="color: #374151; margin-top: 1.5rem; margin-bottom: 1rem; border-bottom: 2px solid #f3f4f6; padding-bottom: 0.5rem;">
+                        Missionary Details</h4>
+                
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="font-weight: bold; color: #374151; margin-bottom: 0.25rem; display: block;">Missionary
+                                Full Name:</label>
+                                <InputText @bind-Value="checkoutModel.MissionaryName" class="auth-input"
+                                           style="width: 100%; box-sizing: border-box;" placeholder="Enter full name" />
+                                <ValidationMessage For="@(() => checkoutModel.MissionaryName)"
+                                                   style="color: #dc2626; font-size: 0.9rem; margin-top: 0.25rem; display: block;" />
+                            </div>
+                
+                            <div style="margin-bottom: 2rem;">
+                                <label style="font-weight: bold; color: #374151; margin-bottom: 0.25rem; display: block;">Assigned
+                                    Mission:</label>
+                                    <InputText @bind-Value="checkoutModel.MissionName" class="auth-input"
+                                               style="width: 100%; box-sizing: border-box;" placeholder="e.g., Utah Provo Mission" />
+                                    <ValidationMessage For="@(() => checkoutModel.MissionName)"
+                                                       style="color: #dc2626; font-size: 0.9rem; margin-top: 0.25rem; display: block;" />
+                                </div>
 
-            <button type="submit" class="btn">Place Order</button>
-        </EditForm>
-    }
-</div>
+                                <button type="submit" class="btn-submit">Place Order</button>
+                            </EditForm>
+                        }
+                    </div>
+                </div>
 
 @code {
     private CheckoutModel checkoutModel = new();
     private bool checkoutComplete = false;
     private decimal finalTotal = 0;
-    private List<CartItem> purchasedItems = new(); // Variable to hold the items
+    private List<CartItem> purchasedItems = new();
 
     private async Task ProcessCheckout()
     {
         finalTotal = CartService.GetTotal();
-        purchasedItems = CartService.Items.ToList(); // Capture items before clearing the cart
+        purchasedItems = CartService.Items.ToList();
 
         var newOrder = new Order
         {
             MissionaryName = checkoutModel.MissionaryName,
             MissionName = checkoutModel.MissionName,
             TotalAmount = finalTotal,
-            Items = purchasedItems // Pass the captured list to the database
+            Items = purchasedItems
         };
 
         await OrderService.PlaceOrderAsync(newOrder);

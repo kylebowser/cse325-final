@@ -4,34 +4,33 @@
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
 
+<div class="form-wrapper">
+    <div class="form-card">
+        <h2>Add New Product</h2>
+        <p class="form-subtitle">Enter the details for your new fresh baked item.</p>
 
-<div class="main">
-    <EditForm Model="product" OnValidSubmit="SaveProduct">
-        <div class="checkout-cols">
-            <div class="checkout-order-details">
-                <h4>Review order</h4>
-            </div>
+        @if (isError)
+        {
+            <div class="error-message">Please enter all required product details.</div>
+        }
 
-            <div class="checkout-delivery-address">
-                <h4>Deliver to...</h4>
-                @if (isError)
-                {
-                    <div class="alert alert-danger">Please enter a name and address.</div>
-                }
+        <EditForm Model="product" OnValidSubmit="SaveProduct">
+            <DataAnnotationsValidator />
+            
+            <div class="form-inputs">
+                <!-- This component holds actual input fields -->
                 <ProductAdder Product="product" />
             </div>
-        </div>
 
-        <button class="checkout-button btn btn-warning" type="Submit" disabled=@isError>Add Product</button>
-        <DataAnnotationsValidator />
-    </EditForm>
+            <button class="btn-submit" type="Submit" disabled=@isError>Add Product</button>
+        </EditForm>
+    </div>
 </div>
 
 @code {
     private Product product = new();
-
-
     bool isError = false;
+
     protected void ShowError()
     {
         isError = true;
@@ -41,6 +40,7 @@
     {
         var response = await HttpClient.PostAsJsonAsync(NavigationManager.BaseUri + "api/products", product);
         var newProductId = await response.Content.ReadAsStringAsync();
+        // Assuming API returns the literal ID. We might need to adjust based on how MongoDB returns the ID.
         NavigationManager.NavigateTo($"/product/{newProductId}");
     }
 }

@@ -1,28 +1,51 @@
 @page "/product/{id}"
+@rendermode InteractiveServer
 
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
+@inject BreadOfLife.Services.CartService CartService
 
 @using BreadOfLife.Components.Model
+@using BreadOfLife.Models
+
 @if (Product == null)
 {
-    <p>Loading...</p>
+    <p class="loading-text">Loading fresh baked goods...</p>
 }
 else
 {
-    <h1>@Product.Name</h1>
-    <p>Baker: @Product.Baker</p>
-    <img src="@Product.ImageUrl" alt="@Product.Name" />
-    <p>@Product.Description</p>
-    <h2>Ingredients:</h2>
-    <p>@Product.Ingredients</p>
-    <p>Allergens: @Product.Allergens</p>
-    <p>Price: $@Product.Price.ToString("0.00")</p>
-    <p>Days till Delivery: @Product.Days Days</p>
+    <div class="product-page-container">
+        <div class="product-image-section">
+            <img src="@Product.ImageUrl" alt="@Product.Name" class="main-product-image" />
+        </div>
+        
+        <div class="product-details-section">
+            <h1 class="product-title">@Product.Name</h1>
+            <p class="product-baker">Baked by <strong>@Product.Baker</strong></p>
+            
+            <div class="product-price">$@Product.Price.ToString("0.00")</div>
+            
+            <p class="product-description">@Product.Description</p>
+            
+            <div class="product-meta">
+                <div class="meta-item">
+                    <strong>Ingredients:</strong> <br /> @Product.Ingredients
+                </div>
+                <div class="meta-item">
+                    <strong>Allergens:</strong> <br /> @Product.Allergens
+                </div>
+                <div class="meta-item">
+                    <strong>Delivery Time:</strong> <br /> @Product.Days Days
+                </div>
+            </div>
+
+            <!-- Wired up the click event -->
+            <button class="btn-add-to-cart" @onclick="AddToCart">Add to Cart</button>
+        </div>
+    </div>
 }
 
 @code {
-
     [Parameter] public string id { get; set; } = string.Empty;
     private Product? Product;
 
@@ -31,4 +54,23 @@ else
         Product = await HttpClient.GetFromJsonAsync<Product>(NavigationManager.BaseUri + $"api/products/{id}");
     }
 
+    private void AddToCart()
+    {
+        if (Product != null)
+        {
+            var cartItem = new CartItem
+            {
+                Id = Product.Id,
+                Name = Product.Name,
+                // Cast to decimal if your Product model uses double/float, otherwise leave as is
+                Price = (decimal)Product.Price,
+                Quantity = 1
+            };
+            
+            CartService.AddToCart(cartItem);
+            
+            // Automatically redirect the user to the cart page after adding
+            NavigationManager.NavigateTo("/cart");
+        }
+    }
 }

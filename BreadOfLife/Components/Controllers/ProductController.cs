@@ -26,10 +26,21 @@ public class ProductsController : Controller
     [HttpGet("search")]
     public async Task<IActionResult> Search(string searchString)
     {
-        var products = await _productCollection.Find(p => p.Name.Contains(searchString)).ToListAsync()
-        ;
-        var bakerProducts = await _productCollection.Find(p => p.Baker.Contains(searchString)).ToListAsync();
-        products.AddRange(bakerProducts);
+        // If the search is empty, just return all products
+        if (string.IsNullOrWhiteSpace(searchString))
+        {
+            return Ok(await _productCollection.Find(_ => true).ToListAsync());
+        }
+
+        // Create a case-insensitive regex for the search string
+        var searchRegex = new BsonRegularExpression(searchString, "i");
+
+        // Search where Name OR Baker matches the regex (single database trip, no duplicates)
+        var filter = Builders<Product>.Filter.Regex(p => p.Name, searchRegex) |
+                     Builders<Product>.Filter.Regex(p => p.Baker, searchRegex);
+
+        var products = await _productCollection.Find(filter).ToListAsync();
+        
         return Ok(products);
     }
 
