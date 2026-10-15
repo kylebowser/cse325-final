@@ -3,43 +3,56 @@
 @inject NavigationManager NavigationManager
 @inject HttpClient HttpClient
 @inject AuthService AuthService
+@inject CartService CartService
+@implements IDisposable
 
 <div class="main-layout">
     <header class="top-bar">
-        <h1>Bread of Life</h1>
-        <a class="logo" href="">
-            @* <img src="img/logo.svg" /> *@
-        </a>
+        <h1><a href="/" class="brand-link">Bread of Life</a></h1>
 
         @if (!AuthService.IsLoggedIn)
         {
             <NavLink href="baker/login" class="nav-tab" Match="NavLinkMatch.All">
                 <div>Login</div>
             </NavLink>
-
-            <NavLink href="baker/register" class="nav-tab">
-                <div>Sign Up</div>
-            </NavLink>
         }
-        <NavLink href="checkout" class="nav-tab">
-            <div>Checkout</div>
-        </NavLink>
-
-        @if (AuthService.IsLoggedIn)
+        else
         {
+            <!-- Greeting extracting the name from the email -->
+            <div class="nav-greeting">
+                Hello, @(AuthService.CurrentBakerEmail.Split('@')[0])!
+            </div>
+            
             <NavLink href="addproduct" class="nav-tab">
                 <div>Add Product</div>
             </NavLink>
+
+            <!-- Logout Button -->
+            <button class="nav-tab btn-logout" @onclick="HandleLogout">
+                <div>Logout</div>
+            </button>
+        }
+
+        @* Dynamically calculates the total quantity of items in the cart *@
+        <NavLink href="cart" class="nav-tab cart-link">
+            <div>🛒 <span class="cart-badge">@CartService.Items.Sum(i => i.Quantity)</span></div>
+        </NavLink>
+
+        @* Conditionally show checkout only if the cart has items *@
+        @if (CartService.Items.Any())
+        {
+            <NavLink href="checkout" class="nav-tab">
+                <div>Checkout</div>
+            </NavLink>
         }
     </header>
-
 
     <div class="content">
         @Body
     </div>
 
     <footer>
-        &copy; Bread of Life @DateTime.UtcNow.Year | Kyle Bowser | Antony | CSE 325 Final Project
+        &copy; Bread of Life @DateTime.UtcNow.Year | Kyle Bowser | Antony Ochieng | CSE 325 Final Project
     </footer>
 </div>
 
@@ -48,3 +61,26 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        // Subscribe to both cart and auth events
+        CartService.OnCartChanged += StateHasChanged;
+        AuthService.OnAuthStateChanged += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        CartService.OnCartChanged -= StateHasChanged;
+        AuthService.OnAuthStateChanged -= StateHasChanged;
+    }
+
+    private void HandleLogout()
+    {
+        AuthService.Logout();
+        // Clear the cart when the baker logs out
+        CartService.ClearCart();
+        NavigationManager.NavigateTo("/");
+    }
+}
